@@ -66,7 +66,7 @@
 							//continue normally
 						}						
 					}
-					selectedCards = JSON.parse(getCookie(card.code));
+					
 					for (var key in cards) {
 						var card = cards[key];
 						if (card.type === "hero") {
@@ -202,6 +202,9 @@
 				$("#heroes").hide();
 				fillNonHeroes();
 				renderSelectedCards();
+				if (!location.hash) {
+					selectedCards = JSON.parse(getCookie(card.code));
+				}
 			}
 			
 			function fillNonHeroes() {
