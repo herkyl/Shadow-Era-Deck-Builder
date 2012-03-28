@@ -57,6 +57,16 @@
 							}
 						}
 					});
+					if (location.hash) {
+						try {
+							makeDeckFromHash(location.hash.substring(1));
+							return;
+						} catch (err) {
+							alert("This URL(hash) is broken, cannot build a deck.");
+							//continue normally
+						}						
+					}
+					selectedCards = JSON.parse(getCookie(card.code));
 					for (var key in cards) {
 						var card = cards[key];
 						if (card.type === "hero") {
@@ -66,6 +76,39 @@
 				});
 			});
 			
+			//Hash must be without #
+			function makeDeckFromHash(hash) {
+				pairs = hash.split("&");
+				var newSelectedCards = new Array();
+				for (var i = 0; i < pairs.length; i++) {
+					pair = pairs[i].split("=");
+					code = pair[0].trim();
+					if (code === "hero") {
+						hero = getCardByCode(pair[1].trim());
+					} else {
+						newSelectedCards.push(
+							{
+								card : getCardByCode(code),
+								count : pair[1].trim()}
+							);
+					}
+				}
+
+				selectedCards = newSelectedCards;
+				setAsHero(hero);
+				renderSelectedCards();
+			}
+			
+			function getCardByCode(code) {
+				for (var i = 0; i < cards.length; i++) {
+					card = cards[i];
+					if (card.code === code) {
+						return card;
+					}
+				}
+				return null;
+			}
+			
 			function setCookie(key, value) {
 				document.cookie = key + "=" + value;
 			}
@@ -74,10 +117,12 @@
 			function getCookie(key) {
 				cookie = document.cookie;
 				pairs = cookie.split(';');
-				for (p in pairs) {
-					pair = pairs[p].split("=");
-					if (pair[0].trim() === key) {
-						return pair[1].trim();
+				if (pairs !== null) {
+					for (var i = 0; i < pairs.length; i++) {
+						pair = pairs[i].split("=");
+						if (pair[0].trim() === key) {
+							return pair[1].trim();
+						}
 					}
 				}
 				return null;
@@ -122,6 +167,7 @@
 			
 			function renderSelectedCards() {
 				$("#selected").html("");
+				$("#heroes").html(getImgElementByCard(hero));
 				var total = 1;
 				for (i = 0; i < selectedCards.length; i++) {
 					total += selectedCards[i].count;
@@ -155,7 +201,6 @@
 				$("#hero").html(getImgElementByCard(card));
 				$("#heroes").hide();
 				fillNonHeroes();
-				selectedCards = JSON.parse(getCookie(card.code));
 				renderSelectedCards();
 			}
 			
