@@ -83,8 +83,12 @@
 				return null;
 			}
 			
+			function getImgElementByCard(card) {
+				return $("<img class='card-img' src='http://www.shadowera.com/cards/" + card.code + ".jpg' alt='" + card.name + "'/>");
+			}
+			
 			function addToHeroes(card) {
-				img = $("<img class='card-img' src='http://www.shadowera.com/cards/" + card.code + ".jpg' alt='" + card.name + "'/>");
+				img = getImgElementByCard(card);
 				img.click(function () {
 					setAsHero(card);
 				});
@@ -108,6 +112,14 @@
 				$("#selected").append(img);
 			}
 			
+			function setLocationHash(selectedCards) {
+				var hash = "hero=" + hero.code;
+				for (i = 0; i < selectedCards.length; i++) {
+					hash += "&" + selectedCards[i].card.code + "=" + selectedCards[i].count;
+				}
+				location.hash = hash;
+			}
+			
 			function renderSelectedCards() {
 				$("#selected").html("");
 				var total = 1;
@@ -117,10 +129,11 @@
 				}
 				$("#info").html("<h3>" + total + " card(s) selected</h3>");
 				setCookie(hero.code, JSON.stringify(selectedCards));
+				setLocationHash(selectedCards);
 			}
 			
 			function addToNormals(card) {
-				img = $("<img class='card-img' src='http://www.shadowera.com/cards/" + card.code + ".jpg' alt='" + card.name + "'/>");
+				img = getImgElementByCard(card);
 				img.click(function () {
 					var exists = false;
 					for (i = 0; i < selectedCards.length; i++) {
@@ -139,7 +152,7 @@
 			
 			function setAsHero(card) {
 				hero = card;
-				$("#hero").html("<img class='card-img' src='http://www.shadowera.com/cards/" + card.code + ".jpg' alt='" + card.name + "'/>");
+				$("#hero").html(getImgElementByCard(card));
 				$("#heroes").hide();
 				fillNonHeroes();
 				selectedCards = JSON.parse(getCookie(card.code));
