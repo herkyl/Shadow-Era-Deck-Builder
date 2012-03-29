@@ -19,6 +19,7 @@
 				return this.push.apply(this, rest);
 			};
 		
+			var MAX_SINGLE_CARD = 4;
 			//CODE, NAME, TYPE(hero, ally, support), CLASS(warrior, mage..), RACE
 			var cards = new Array();
 			var selectedCards = new Array();
@@ -188,7 +189,9 @@
 					var exists = false;
 					for (i = 0; i < selectedCards.length; i++) {
 						if (selectedCards[i].card.name === card.name) {
-							selectedCards[i].count++;	
+							if (selectedCards[i].count < MAX_SINGLE_CARD) {
+								selectedCards[i].count++;	
+							}
 							exists = true;
 						}
 					}
